@@ -1,0 +1,17 @@
+{
+  "name": "Knucklebones",
+  "icons": [
+    {
+      "src": "/favicon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "density": "1.5"
+    },
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "density": "4.0"
+    }
+  ]
+}
