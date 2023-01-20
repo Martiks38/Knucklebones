@@ -1,9 +1,20 @@
+/* eslint-env node */
 /** @type {import('tailwindcss').Config} */
-
-export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+module.exports = {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx,vue}"],
   theme: {
-    extend: {},
+    clipPath: {
+      buttonHome:
+        "clip-path: polygon(0 0, 100% 0, 84% 50%, 100% 100%, 0 100%, 16% 50%);",
+    },
+    extend: {
+      colors: {
+        redGame: "#fc0403",
+      },
+      rotate: {
+        135: "135deg",
+      },
+    },
   },
   plugins: [],
 };
