@@ -2,7 +2,7 @@
 const linkButtons = [
   ["Jugar Local", "/local"],
   ["Jugar Multijugador", "/multiplayer"],
-  ["Cómo jugar", "/how_play"],
+  ["Cómo jugar", "/how_to_play"],
 ];
 
 const activeHover = (ev: MouseEvent) => {
