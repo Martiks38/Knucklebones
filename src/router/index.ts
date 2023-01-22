@@ -9,6 +9,11 @@ const router = createRouter({
       name: "home",
       component: HomeView,
     },
+    {
+      path: "/how_to_play",
+      name: "howToPlay",
+      component: () => import("@/views/HowToPlayView.vue"),
+    },
   ],
 });
 
