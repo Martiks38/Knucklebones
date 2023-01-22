@@ -46,7 +46,7 @@ describe("<HomeView />", () => {
     const bgButtons = container.querySelectorAll(".styleButton");
 
     const listClasses = Array.from(bgButtons[1].classList);
-    screen.debug();
+
     expect(listClasses).toContain("active");
   });
 
