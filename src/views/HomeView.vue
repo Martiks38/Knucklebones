@@ -3,7 +3,7 @@ import FireAnimation from "@/components/FireAnimation.vue";
 import GenericButton from "@/components/GenericButton.vue";
 
 const linkButtons = [
-  ["Jugar Local", "/local"],
+  ["Jugar Local", "/local_play"],
   ["Jugar Multijugador", "/multiplayer"],
   ["Cómo jugar", "/how_to_play"],
 ];

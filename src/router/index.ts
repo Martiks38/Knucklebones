@@ -14,6 +14,11 @@ const router = createRouter({
       name: "howToPlay",
       component: () => import("@/views/HowToPlayView.vue"),
     },
+    {
+      path: "/local_play",
+      name: "playLocal",
+      component: () => import("@/views/LocalPlay.vue"),
+    },
   ],
 });
 
