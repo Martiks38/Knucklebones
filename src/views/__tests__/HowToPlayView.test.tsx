@@ -1,55 +1,49 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  type RenderResult,
-} from "@testing-library/vue";
-import HowToPlayView from "@/views/HowToPlayView.vue";
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render, screen, type RenderResult } from '@testing-library/vue'
+import HowToPlayView from '@/views/HowToPlayView.vue'
 
-describe("<HowToPlayView />", () => {
-  let renderResult: RenderResult;
+describe('<HowToPlayView />', () => {
+	let renderResult: RenderResult
 
-  beforeEach(() => {
-    renderResult = render(HowToPlayView);
-  });
+	beforeEach(() => {
+		renderResult = render(HowToPlayView)
+	})
 
-  afterEach(() => {
-    cleanup();
-  });
+	afterEach(() => {
+		cleanup()
+	})
 
-  it("Correctly render", () => {
-    expect(screen.getByText(/Cómo jugar/i)).toBeDefined();
-  });
+	it('Correctly render', () => {
+		expect(screen.getByText(/Cómo jugar/i)).toBeDefined()
+	})
 
-  it("The button 'Entendido' must have the active class", () => {
-    const { container } = renderResult;
+	it("The button 'Entendido' must have the active class", () => {
+		const { container } = renderResult
 
-    const button = container.querySelector(".active");
+		const button = container.querySelector('.active')
 
-    expect(button).toBeDefined();
-  });
+		expect(button).toBeDefined()
+	})
 
-  it("Pressing 'Entendido' redirects to Home", async () => {
-    const button = screen.getByText(/Entendido/i);
+	it("Pressing 'Entendido' redirects to Home", async () => {
+		const button = screen.getByText(/Entendido/i)
 
-    expect(button).toBeDefined();
+		expect(button).toBeDefined()
 
-    await fireEvent.click(button);
+		await fireEvent.click(button)
 
-    expect(location.pathname).toEqual("/");
-  });
+		expect(location.pathname).toEqual('/')
+	})
 
-  it("When you hover over the 'Entendido' button, you still have the class active.", async () => {
-    const { container } = renderResult;
+	it("When you hover over the 'Entendido' button, you still have the class active.", async () => {
+		const { container } = renderResult
 
-    const button = screen.getByText(/Entendido/i);
+		const button = screen.getByText(/Entendido/i)
 
-    await fireEvent.mouseEnter(button);
+		await fireEvent.mouseEnter(button)
 
-    const buttonState = container.querySelector(".active");
+		const buttonState = container.querySelector('.active')
 
-    expect(buttonState).toBeDefined();
-  });
-});
+		expect(buttonState).toBeDefined()
+	})
+})

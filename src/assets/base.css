@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 :root {
-  --bg-button: #fc0403;
+	--bg-button: #fc0403;
 }
