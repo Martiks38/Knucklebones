@@ -1,20 +1,40 @@
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, inject, onUpdated, reactive, ref } from 'vue'
 import { clsx } from 'clsx'
-import { DICE_GRID } from '@/consts/game'
+import DiceModel from '@/components/DiceModel.vue'
 import { addToGrid } from '@/utils/addToGrid'
-import type { Player } from '@/typings'
+import { generateRandomNum } from '@/utils/game/generateRandomNum'
+import { changePlayerTurn } from '@/utils/changePlayerTurn'
+import type { GridColumn, Player } from '@/typings'
 
 type Props = {
 	player: Player
+	players: [Player, Player]
 }
 
 const props = defineProps<Props>()
 
 const isPlayer1 = ref(props.player.number === '1')
 const isPlayer2 = ref(props.player.number === '2')
+const diceValue = ref<number>(generateRandomNum(1, 6))
 
-const playerDices = reactive(DICE_GRID)
+const { informationNewDice, deleteDices } = inject('delete') as {
+	informationNewDice: { col: number; value: number }
+	deleteDices: (value: number, colNumber: number) => void
+}
+
+const DICE_GRID = computed(() =>
+	Array.from({ length: 3 }, (_, col) => {
+		return {
+			col: Array.from({ length: 3 }, (_, cell): GridColumn => {
+				return { value: 0, multiply: null, id: `${cell}` }
+			}),
+			id: `C${col}`
+		}
+	})
+)
+
+const playerDices = reactive(DICE_GRID.value)
 
 const score = computed(() =>
 	playerDices.reduce((total, dicesCol) => {
@@ -26,6 +46,27 @@ const score = computed(() =>
 		)
 	}, 0)
 )
+
+onUpdated(() => {
+	let col = playerDices[informationNewDice.col].col
+
+	if (informationNewDice.value && props.player.isTurn) {
+		let modCol = col.map((dice) => {
+			return dice.value === informationNewDice.value ? { ...dice, value: 0 } : dice
+		})
+
+		modCol.forEach((dice, ind) => {
+			if (ind === 2 || dice.value !== 0) return
+
+			if (dice.value === 0) {
+				modCol[ind] = modCol[ind + 1]
+				modCol[ind + 1] = { ...modCol[ind + 1], value: 0, multiply: null }
+			}
+		})
+
+		playerDices[informationNewDice.col].col = modCol
+	}
+})
 
 const src = `src/assets/avatar-${props.player.number}.png`
 
@@ -39,6 +80,28 @@ const highlightColumn = (ev: MouseEvent) => {
 	gridColumns.forEach((col) => {
 		if (col !== targetCol) col.classList.remove('highlight')
 	})
+}
+
+const handlerTurn = (event: MouseEvent) => {
+	const target = event.target as HTMLElement
+	const column = target.closest('[data-col]') as HTMLElement
+	const colId = column.dataset.col as string
+
+	const colNumber = Number(colId.split('')[1])
+	const isFullColumn = playerDices[colNumber].col.every((dice) => dice.value !== 0)
+
+	if (isFullColumn) return
+
+	addToGrid<number>({ colNumber, value: diceValue.value, grid: playerDices })
+	changePlayerTurn(props.players[0], props.players[1])
+	deleteDices(diceValue.value, colNumber)
+
+	diceValue.value = generateRandomNum(1, 6)
+
+	target
+		.closest('.diceGrid')
+		?.querySelectorAll('[data-col]')
+		.forEach((col) => col.classList.remove('highlight'))
 }
 </script>
 
@@ -64,20 +127,29 @@ const highlightColumn = (ev: MouseEvent) => {
 				<p class="text-2xl text-center">{{ score }}</p>
 			</div>
 			<div class="diceBox">
-				<div v-if="true" :data-dice="player.number"></div>
+				<div v-if="player.isTurn && diceValue" class="flex items-center justify-center h-full">
+					<DiceModel :value="diceValue" class="w-[88px] h-auto" />
+				</div>
 			</div>
 		</div>
-		<div class="w-1/3 diceGrid" :class="clsx({ disabledGrid: !player.isTurn })">
+		<div
+			class="w-1/3 diceGrid"
+			:class="clsx({ disabledGrid: !player.isTurn, turnGrid: isPlayer2 })"
+		>
 			<div
 				v-for="(diceCol, index) in playerDices"
 				:key="diceCol.id"
-				class="grid gap-2 p-2"
+				class="grid gap-2 p-2 grid-rows-3"
 				:class="clsx({ highlight: player.isTurn && index === 0 })"
 				@mouseenter="highlightColumn"
-				@click="addToGrid<number>({ value: 2, grid: playerDices, event: $event })"
-				:data-row="diceCol.id"
+				@click="handlerTurn"
+				:data-col="diceCol.id"
 			>
-				<div v-for="dice of diceCol.col" :key="dice.id" class="bg-[#17150f]"></div>
+				<div v-for="dice of diceCol.col" :key="dice.id" class="bg-[#17150f]">
+					<div v-if="dice.value" class="flex items-center justify-center h-full">
+						<DiceModel :value="dice.value" class="w-16 h-auto" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -90,6 +162,10 @@ const highlightColumn = (ev: MouseEvent) => {
 	background-color: #212826;
 	border: solid 20px #39433e;
 	box-shadow: 0 17px #1c2420;
+}
+
+.turnGrid {
+	transform: rotateX(180deg);
 }
 
 .face-to-right {
@@ -109,7 +185,7 @@ const highlightColumn = (ev: MouseEvent) => {
 .diceGrid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	height: 240px;
+	height: 280px;
 	background-color: antiquewhite;
 }
 
