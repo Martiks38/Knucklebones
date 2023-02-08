@@ -19,19 +19,13 @@ import ArrowLeft from '@/components/ArrowLeft.vue'
 						<div class="line line__horizontal"></div>
 						<div class="line line__50"></div>
 						<div class="line line__105"></div>
-						<DiceModel
-							class="w-16 h-auto rounded-[12px] outline outline-[8px] -outline-offset-8"
-							state="multiply"
-						/>
+						<DiceModel class="w-16 h-16" state="multiply" :value="6" />
 					</div>
 					<div class="absolute -bottom-4 -right-4 rotate-180">
 						<div class="line line__horizontal"></div>
 						<div class="line line__50"></div>
 						<div class="line line__105"></div>
-						<DiceModel
-							class="w-16 h-auto rounded-[12px] outline outline-[8px] -outline-offset-8"
-							state="multiply"
-						/>
+						<DiceModel class="w-16 h-16" state="multiply" :value="6" />
 					</div>
 				</div>
 				<div class="w-20">
@@ -41,13 +35,10 @@ import ArrowLeft from '@/components/ArrowLeft.vue'
 					<div
 						class="absolute -top-6 left-1/2 -translate-x-1/2 p-6 pt-0 rounded-xl border-4 border-black"
 					>
-						<div class="absolute top-6 left-6 w-16 h-16">
+						<div class="absolute bottom-6 left-6 w-16 h-16">
 							<img src="/src/assets/cross.svg" alt="" />
 						</div>
-						<DiceModel
-							class="w-16 h-auto rounded-[12px] outline outline-[8px] -outline-offset-8"
-							state="delete"
-						/>
+						<DiceModel class="w-16 h-16" state="delete" :value="6" />
 					</div>
 					<div
 						class="absolute -bottom-6 left-1/2 -translate-x-1/2 p-6 pb-0 rounded-xl border-4 border-black"
@@ -55,10 +46,7 @@ import ArrowLeft from '@/components/ArrowLeft.vue'
 						<div class="absolute top-6 left-6 w-16 h-16">
 							<img src="/src/assets/cross.svg" alt="" />
 						</div>
-						<DiceModel
-							class="w-16 h-auto rounded-[12px] outline outline-[8px] -outline-offset-8"
-							state="delete"
-						/>
+						<DiceModel class="w-16 h-16" state="delete" :value="6" />
 					</div>
 				</div>
 			</div>
