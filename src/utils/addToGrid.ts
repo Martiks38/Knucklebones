@@ -1,10 +1,10 @@
 export function addToGrid<T>({
-	value,
-	event,
-	grid
+	colNumber,
+	grid,
+	value
 }: {
 	value: T
-	event: MouseEvent
+	colNumber: number
 	grid: {
 		col: {
 			value: T
@@ -13,10 +13,6 @@ export function addToGrid<T>({
 		id: string
 	}[]
 }): void {
-	const column = (event.target as HTMLElement).closest('[data-row]') as HTMLElement
-	const colId = column.dataset.row as string
-
-	const colNumber = Number(colId.split('')[1])
 	const slotDice = grid[colNumber].col.find((cell) => cell?.value === 0)
 
 	if (slotDice) slotDice.value = value
