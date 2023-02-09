@@ -3,8 +3,8 @@ export type Player = {
 	isTurn: boolean
 }
 
-export type GridColumn = {
-	value: number
-	multiply: 'Double' | 'Triple' | null
+export type GridColumn<T> = {
+	value: T
+	factor?: number
 	id: string
 }
