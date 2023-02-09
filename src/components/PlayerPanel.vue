@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, onUpdated, reactive, ref } from 'vue'
+import { computed, inject, onBeforeUpdate, reactive, ref } from 'vue'
 import { clsx } from 'clsx'
 import DiceModel from '@/components/DiceModel.vue'
 import { addToGrid } from '@/utils/addToGrid'
@@ -11,23 +11,26 @@ type Props = {
 	player: Player
 	players: [Player, Player]
 }
-
 const props = defineProps<Props>()
 
 const isPlayer1 = ref(props.player.number === '1')
 const isPlayer2 = ref(props.player.number === '2')
 const diceValue = ref<number>(generateRandomNum(1, 6))
 
-const { informationNewDice, deleteDices } = inject('delete') as {
+const { informationNewDice, changeNewDice } = inject('newDice') as {
 	informationNewDice: { col: number; value: number }
-	deleteDices: (value: number, colNumber: number) => void
+	changeNewDice: (
+		currentDice: { col: number; value: number },
+		newCol: number,
+		newValue: number
+	) => void
 }
 
 const DICE_GRID = computed(() =>
 	Array.from({ length: 3 }, (_, col) => {
 		return {
-			col: Array.from({ length: 3 }, (_, cell): GridColumn => {
-				return { value: 0, multiply: null, id: `${cell}` }
+			col: Array.from({ length: 3 }, (_, cell): GridColumn<number> => {
+				return { value: 0, factor: 1, id: `${cell}` }
 			}),
 			id: `C${col}`
 		}
@@ -47,7 +50,7 @@ const score = computed(() =>
 	}, 0)
 )
 
-onUpdated(() => {
+onBeforeUpdate(() => {
 	let col = playerDices[informationNewDice.col].col
 
 	if (informationNewDice.value && props.player.isTurn) {
@@ -56,11 +59,11 @@ onUpdated(() => {
 		})
 
 		modCol.forEach((dice, ind) => {
-			if (ind === 2 || dice.value !== 0) return
+			if (ind === 2) return
 
 			if (dice.value === 0) {
 				modCol[ind] = modCol[ind + 1]
-				modCol[ind + 1] = { ...modCol[ind + 1], value: 0, multiply: null }
+				modCol[ind + 1] = { ...modCol[ind + 1], value: 0, factor: 1 }
 			}
 		})
 
@@ -94,7 +97,7 @@ const handlerTurn = (event: MouseEvent) => {
 
 	addToGrid<number>({ colNumber, value: diceValue.value, grid: playerDices })
 	changePlayerTurn(props.players[0], props.players[1])
-	deleteDices(diceValue.value, colNumber)
+	changeNewDice(informationNewDice, colNumber, diceValue.value)
 
 	diceValue.value = generateRandomNum(1, 6)
 
@@ -146,8 +149,8 @@ const handlerTurn = (event: MouseEvent) => {
 				:data-col="diceCol.id"
 			>
 				<div v-for="dice of diceCol.col" :key="dice.id" class="bg-[#17150f]">
-					<div v-if="dice.value" class="flex items-center justify-center h-full">
-						<DiceModel :value="dice.value" class="w-16 h-auto" />
+					<div v-show="dice.value" class="flex items-center justify-center h-full">
+						<DiceModel :factor="dice.factor" :value="dice.value" class="w-[74px] h-auto" />
 					</div>
 				</div>
 			</div>
