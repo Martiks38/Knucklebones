@@ -38,7 +38,7 @@ import ArrowLeft from '@/components/ArrowLeft.vue'
 						<div class="absolute bottom-6 left-6 w-16 h-16">
 							<img src="/src/assets/cross.svg" alt="" />
 						</div>
-						<DiceModel class="w-16 h-16" state="delete" :value="6" />
+						<DiceModel class="w-16 h-16 deleteDice" :value="6" />
 					</div>
 					<div
 						class="absolute -bottom-6 left-1/2 -translate-x-1/2 p-6 pb-0 rounded-xl border-4 border-black"
@@ -46,7 +46,7 @@ import ArrowLeft from '@/components/ArrowLeft.vue'
 						<div class="absolute top-6 left-6 w-16 h-16">
 							<img src="/src/assets/cross.svg" alt="" />
 						</div>
-						<DiceModel class="w-16 h-16" state="delete" :value="6" />
+						<DiceModel class="w-16 h-16 deleteDice" :value="6" />
 					</div>
 				</div>
 			</div>

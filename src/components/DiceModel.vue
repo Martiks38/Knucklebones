@@ -1,34 +1,33 @@
 <script setup lang="ts">
+import { onBeforeUpdate, ref } from 'vue'
+
 type Props = {
-	state?: string
+	factor?: number
 	value: number
 }
 
 const props = defineProps<Props>()
 
-let bgDice: string
-let outlineColor: string
+const bgDice = ref('#f3ebcd')
+const outlineColor = ref('outline-[#d4ceb2]')
 
 const compareState = () => {
-	if (!props.state) {
-		bgDice = '#f3ebcd'
-		outlineColor = 'outline-[#d4ceb2]'
-
+	if (props.factor === 2) {
+		bgDice.value = '#ebd77a'
+		outlineColor.value = 'outline-[#cabe6b]'
 		return
 	}
 
-	if (props.state === 'multiply') {
-		bgDice = '#e0d591'
-		outlineColor = 'outline-[#d1ce8a]'
-
+	if (props.factor === 3) {
+		bgDice.value = '#69a0bc'
+		outlineColor.value = 'outline-[#5285a1]'
 		return
 	}
-
-	bgDice = '#f3b39d'
-	outlineColor = 'outline-[#d89b8b]'
 }
 
-compareState()
+onBeforeUpdate(() => {
+	compareState()
+})
 </script>
 
 <template>
@@ -99,3 +98,13 @@ compareState()
 		/>
 	</svg>
 </template>
+
+<style>
+.deleteDice {
+	outline-color: #d89b8b;
+}
+
+.deleteDice rect {
+	fill: #f3b39d;
+}
+</style>
