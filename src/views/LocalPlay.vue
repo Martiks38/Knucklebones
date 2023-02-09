@@ -13,15 +13,19 @@ const player2: Player = reactive({
 	isTurn: false
 })
 
-const players: [Player, Player] = [player1, player2]
 const informationNewDice = reactive({ col: 0, value: 0 })
+const players: [Player, Player] = [player1, player2]
 
-const deleteDices = (value: number, colNumber: number) => {
-	informationNewDice.value = value
-	informationNewDice.col = colNumber
+const changeNewDice = (
+	currentDice: { col: number; value: number },
+	newCol: number,
+	newValue: number
+) => {
+	currentDice.col = newCol
+	currentDice.value = newValue
 }
 
-provide('delete', { informationNewDice, deleteDices })
+provide('newDice', { informationNewDice, changeNewDice })
 
 onBeforeMount(() => {
 	Math.random() > 0.5 ? (player1.isTurn = true) : (player2.isTurn = true)
