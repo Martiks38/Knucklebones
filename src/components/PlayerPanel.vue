@@ -13,6 +13,8 @@ type Props = {
 }
 const props = defineProps<Props>()
 
+const emits = defineEmits(['finishedGame'])
+
 const isPlayer1 = ref(props.player.number === '1')
 const isPlayer2 = ref(props.player.number === '2')
 const diceValue = ref<number>(generateRandomNum(1, 6))
@@ -44,12 +46,13 @@ const score = computed(() =>
 		return (
 			total +
 			dicesCol.col.reduce((rowValue, dice) => {
-				return rowValue + dice.value
+				return rowValue + dice.value * dice.factor
 			}, 0)
 		)
 	}, 0)
 )
 
+// Clear the other player's dice.
 onBeforeUpdate(() => {
 	let col = playerDices[informationNewDice.col].col
 
@@ -62,13 +65,20 @@ onBeforeUpdate(() => {
 			if (ind === 2) return
 
 			if (dice.value === 0) {
-				modCol[ind] = modCol[ind + 1]
+				modCol[ind] = { ...modCol[ind + 1], factor: 1 }
 				modCol[ind + 1] = { ...modCol[ind + 1], value: 0, factor: 1 }
 			}
 		})
 
 		playerDices[informationNewDice.col].col = modCol
 	}
+
+	let isFullDiceTable = playerDices
+		.map(({ col }) => col)
+		.flat(2)
+		.every((dice) => dice.value !== 0)
+
+	if (isFullDiceTable) emits('finishedGame')
 })
 
 const src = `src/assets/avatar-${props.player.number}.png`
@@ -78,9 +88,10 @@ const highlightColumn = (ev: MouseEvent) => {
 
 	targetCol.classList.add('highlight')
 
-	const gridColumns = [...(targetCol.parentNode?.children as HTMLCollection)]
+	const gridColumns = targetCol.parentElement?.querySelectorAll('*')
 
-	gridColumns.forEach((col) => {
+	// eslint-disable-next-line no-undef
+	;(gridColumns as NodeListOf<Element>).forEach((col) => {
 		if (col !== targetCol) col.classList.remove('highlight')
 	})
 }

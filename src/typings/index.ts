@@ -5,6 +5,6 @@ export type Player = {
 
 export type GridColumn<T> = {
 	value: T
-	factor?: number
+	factor: number
 	id: string
 }
