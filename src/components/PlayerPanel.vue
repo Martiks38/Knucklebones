@@ -8,15 +8,18 @@ import { changePlayerTurn } from '@/utils/changePlayerTurn'
 import type { GridColumn, Player } from '@/typings'
 
 type Props = {
-	player: Player
+	player: number
 	players: [Player, Player]
+	gameState: 'playing' | 'finished'
 }
+
 const props = defineProps<Props>()
 
-const emits = defineEmits(['finishedGame'])
+const emits = defineEmits(['finishedGame', 'changeScore'])
 
-const isPlayer1 = ref(props.player.number === '1')
-const isPlayer2 = ref(props.player.number === '2')
+const isTurn = computed(() => {
+	return props.players[props.player - 1].isTurn
+})
 const diceValue = ref<number>(generateRandomNum(1, 6))
 
 const { informationNewDice, changeNewDice } = inject('newDice') as {
@@ -29,12 +32,11 @@ const { informationNewDice, changeNewDice } = inject('newDice') as {
 }
 
 const DICE_GRID = computed(() =>
-	Array.from({ length: 3 }, (_, col) => {
+	Array.from({ length: 3 }, () => {
 		return {
-			col: Array.from({ length: 3 }, (_, cell): GridColumn<number> => {
-				return { value: 0, factor: 1, id: `${cell}` }
-			}),
-			id: `C${col}`
+			col: Array.from({ length: 3 }, (): GridColumn<number> => {
+				return { value: 0, factor: 1 }
+			})
 		}
 	})
 )
@@ -52,25 +54,34 @@ const score = computed(() =>
 	}, 0)
 )
 
-// Clear the other player's dice.
+/*
+ *  Clear the other player's dice.
+ *  Issues the player's score and if the game is over.
+ */
 onBeforeUpdate(() => {
-	let col = playerDices[informationNewDice.col].col
-
-	if (informationNewDice.value && props.player.isTurn) {
-		let modCol = col.map((dice) => {
-			return dice.value === informationNewDice.value ? { ...dice, value: 0 } : dice
+	if (informationNewDice.value && isTurn.value) {
+		let modifiedColumn = playerDices[informationNewDice.col].col.map((dice) => {
+			return dice.value !== informationNewDice.value ? dice : { value: 0, factor: 1 }
 		})
 
-		modCol.forEach((dice, ind) => {
-			if (ind === 2) return
+		let remainingDices = modifiedColumn.filter((dice) => dice.value !== 0)
 
+		if (remainingDices.length !== 0) {
+			let numberElement = remainingDices.length
+			remainingDices.length = 3
+			remainingDices.fill({ value: 0, factor: 1 }, numberElement)
+			modifiedColumn = [...remainingDices]
+		}
+
+		modifiedColumn.forEach((dice, ind) => {
+			if (ind === 2) return
 			if (dice.value === 0) {
-				modCol[ind] = { ...modCol[ind + 1], factor: 1 }
-				modCol[ind + 1] = { ...modCol[ind + 1], value: 0, factor: 1 }
+				modifiedColumn[ind] = { ...modifiedColumn[ind], ...modifiedColumn[ind + 1] }
+				modifiedColumn[ind + 1] = { value: 0, factor: 1 }
 			}
 		})
 
-		playerDices[informationNewDice.col].col = modCol
+		playerDices[informationNewDice.col].col = modifiedColumn
 	}
 
 	let isFullDiceTable = playerDices
@@ -78,10 +89,10 @@ onBeforeUpdate(() => {
 		.flat(2)
 		.every((dice) => dice.value !== 0)
 
+	emits('changeScore', score)
+
 	if (isFullDiceTable) emits('finishedGame')
 })
-
-const src = `src/assets/avatar-${props.player.number}.png`
 
 const highlightColumn = (ev: MouseEvent) => {
 	const targetCol = ev.currentTarget as HTMLElement
@@ -101,7 +112,7 @@ const handlerTurn = (event: MouseEvent) => {
 	const column = target.closest('[data-col]') as HTMLElement
 	const colId = column.dataset.col as string
 
-	const colNumber = Number(colId.split('')[1])
+	const colNumber = Number(colId.split('').at(-1))
 	const isFullColumn = playerDices[colNumber].col.every((dice) => dice.value !== 0)
 
 	if (isFullColumn) return
@@ -123,43 +134,43 @@ const handlerTurn = (event: MouseEvent) => {
 	<div class="relative flex w-full items-center">
 		<div
 			class="flex flex-col items-center gap-2.5 w-1/3 px-4"
-			:class="clsx(isPlayer1 && 'justify-end')"
+			:class="clsx(player === 1 && 'justify-end')"
 		>
 			<div
 				class="absolute h-auto"
-				:class="clsx({ 'order-1 top-[90%]': isPlayer2, 'bottom-[88%]': isPlayer1 })"
+				:class="clsx({ 'order-1 top-[90%]': player === 2, 'bottom-[88%]': player === 1 })"
 			>
-				<div class="relative movingAnimation" :class="clsx(isPlayer2 && 'delayAnimation')">
+				<div class="relative movingAnimation" :class="clsx({ delayAnimation: player === 2 })">
 					<img
 						class="w-full h-auto"
-						:class="clsx({ 'face-to-right': isPlayer1, grayscale: !player.isTurn })"
-						:src="src"
-						:alt="`Jugador ${props.player.number}`"
+						:class="clsx({ 'face-to-right': player === 1, grayscale: !isTurn })"
+						:src="`src/assets/avatar-${player}.png`"
+						:alt="`Jugador ${player}`"
 					/>
 				</div>
-				<p class="mb-2 text-3xl text-center">{{ `Jugador ${player.number}` }}</p>
+				<p class="mb-2 text-3xl text-center">{{ `Jugador ${player}` }}</p>
 				<p class="text-2xl text-center">{{ score }}</p>
 			</div>
 			<div class="diceBox">
-				<div v-if="player.isTurn && diceValue" class="flex items-center justify-center h-full">
+				<div
+					v-show="isTurn && diceValue && gameState === 'playing'"
+					class="flex items-center justify-center h-full"
+				>
 					<DiceModel :value="diceValue" class="w-[88px] h-auto" />
 				</div>
 			</div>
 		</div>
-		<div
-			class="w-1/3 diceGrid"
-			:class="clsx({ disabledGrid: !player.isTurn, turnGrid: isPlayer2 })"
-		>
+		<div class="w-1/3 diceGrid" :class="clsx({ disabledGrid: !isTurn, turnGrid: player === 2 })">
 			<div
-				v-for="(diceCol, index) in playerDices"
-				:key="diceCol.id"
+				v-for="(diceCol, indCol) in playerDices"
+				:key="`C${indCol}`"
 				class="grid gap-2 p-2 grid-rows-3"
-				:class="clsx({ highlight: player.isTurn && index === 0 })"
+				:class="clsx({ highlight: isTurn && indCol === 0 && gameState === 'playing' })"
 				@mouseenter="highlightColumn"
 				@click="handlerTurn"
-				:data-col="diceCol.id"
+				:data-col="`R${indCol}`"
 			>
-				<div v-for="dice of diceCol.col" :key="dice.id" class="bg-[#17150f]">
+				<div v-for="(dice, indCell) in diceCol.col" :key="`C${indCell}`" class="bg-[#17150f]">
 					<div v-show="dice.value" class="flex items-center justify-center h-full">
 						<DiceModel :factor="dice.factor" :value="dice.value" class="w-[74px] h-auto" />
 					</div>
