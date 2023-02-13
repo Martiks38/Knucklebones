@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUpdate, ref } from 'vue'
+import { computed } from 'vue'
 
 type Props = {
 	factor?: number
@@ -8,25 +8,16 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const bgDice = ref('#f3ebcd')
-const outlineColor = ref('outline-[#d4ceb2]')
-
-const compareState = () => {
+const diceStyles = computed(() => {
 	if (props.factor === 2) {
-		bgDice.value = '#ebd77a'
-		outlineColor.value = 'outline-[#cabe6b]'
-		return
+		return { bgDice: '#ebd77a', outlineColor: 'outline-[#cabe6b]' }
 	}
 
 	if (props.factor === 3) {
-		bgDice.value = '#69a0bc'
-		outlineColor.value = 'outline-[#5285a1]'
-		return
+		return { bgDice: '#69a0bc', outlineColor: 'outline-[#5285a1]' }
 	}
-}
 
-onBeforeUpdate(() => {
-	compareState()
+	return { bgDice: '#f3ebcd', outlineColor: 'outline-[#d4ceb2]' }
 })
 </script>
 
@@ -37,9 +28,9 @@ onBeforeUpdate(() => {
 		height="800"
 		viewBox="0 0 16 16"
 		class="rounded-[12px] outline outline-[8px] -outline-offset-8"
-		:class="outlineColor"
+		:class="diceStyles.outlineColor"
 	>
-		<rect :fill="bgDice" x="0" y="0" width="20" height="20" />
+		<rect :fill="diceStyles.bgDice" x="0" y="0" width="20" height="20" />
 		<!-- 1 -->
 		<circle cx="8" cy="8" r="1.5" v-if="value === 1" />
 		<path
