@@ -9,7 +9,6 @@ export function addToGrid<T>({
 	colNumber: number
 	grid: {
 		col: GridColumn<T>[]
-		id: string
 	}[]
 }): void {
 	const diceCol = grid[colNumber].col.slice()
