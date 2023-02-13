@@ -1,10 +1,9 @@
 export type Player = {
-	number: string
 	isTurn: boolean
+	score: number
 }
 
 export type GridColumn<T> = {
 	value: T
 	factor: number
-	id: string
 }
