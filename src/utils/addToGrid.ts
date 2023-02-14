@@ -10,11 +10,11 @@ export function addToGrid<T>({
 	grid: {
 		col: GridColumn<T>[]
 	}[]
-}): void {
+}): void | false {
 	const diceCol = grid[colNumber].col.slice()
 	const diceSlot = diceCol.find((cell) => cell?.value === 0)
 
-	if (!diceSlot) return
+	if (!diceSlot) return false
 
 	diceSlot.value = value
 
