@@ -7,3 +7,5 @@ export type GridColumn<T> = {
 	value: T
 	factor: number
 }
+
+export type GameState = 'playing' | 'finished'
