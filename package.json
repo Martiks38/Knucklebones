@@ -14,19 +14,20 @@
     "prepare": "husky install",
     "test": "vitest --run",
     "test:watch": "vitest --watch",
-    "test:unit": "vitest --root src/",
     "test:dev": "vitest -w --root src/",
     "test:coverage": "vitest --coverage --root src/",
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@vue/compiler-sfc": "3.2.47",
     "clsx": "1.2.1",
-    "vue": "^3.2.45",
+    "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
     "@testing-library/dom": "8.20.0",
+    "@testing-library/user-event": "14.4.3",
     "@testing-library/vue": "6.6.1",
     "@types/jsdom": "^20.0.1",
     "@types/node": "^18.11.12",

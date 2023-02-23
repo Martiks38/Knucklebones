@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import ArrowLeft from '@/components/ArrowLeft.vue'
+import DiceModel from '@/components/DiceModel.vue'
 import FireAnimation from '@/components/FireAnimation.vue'
 import GenericButton from '@/components/GenericButton.vue'
-import DiceModel from '@/components/DiceModel.vue'
-import ArrowLeft from '@/components/ArrowLeft.vue'
 </script>
 
 <template>
