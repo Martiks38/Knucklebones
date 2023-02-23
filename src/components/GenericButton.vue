@@ -9,10 +9,10 @@ const props = defineProps({
 const activeHover = (ev: MouseEvent) => {
 	if (!props.animation) return
 
-	const optionsButtonsHome = Array.from(document.querySelectorAll('.styleButton'))
+	const optionsButtons = Array.from(document.querySelectorAll('.styleButton'))
 	const buttonTarget = (ev.currentTarget as HTMLElement).dataset.option as string
 
-	optionsButtonsHome.forEach((button, index) => {
+	optionsButtons.forEach((button, index) => {
 		if (index === parseInt(buttonTarget)) {
 			button.classList.add('active')
 		} else {
