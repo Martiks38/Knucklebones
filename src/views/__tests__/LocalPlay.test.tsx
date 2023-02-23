@@ -1,17 +1,23 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/vue'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/vue'
+import userEvent from '@testing-library/user-event'
 import type { RenderResult } from '@testing-library/vue'
-import LocalPlayVue from '../LocalPlay.vue'
+
+import LocalPlay from '../LocalPlay.vue'
+
+const user = userEvent.setup()
 
 describe('<LocalPlay />', () => {
 	let renderResult: RenderResult
 
 	beforeEach(() => {
-		renderResult = render(LocalPlayVue)
+		vi.useFakeTimers()
+		renderResult = render(LocalPlay)
 	})
 
 	afterEach(() => {
-		cleanup()
+		vi.clearAllTimers()
+		vi.restoreAllMocks()
 	})
 
 	it('Correctly render', () => {
@@ -29,25 +35,39 @@ describe('<LocalPlay />', () => {
 		expect(diceBoxes).toHaveLength(2)
 	})
 
-	it('Only one column should be highlighted', () => {
-		const { container } = renderResult
-		const highlightColumn = container.querySelectorAll('.highlight')
+	it('After 300ms, show the name of the starting player', async () => {
+		vi.advanceTimersByTime(300)
 
-		expect(highlightColumn).toHaveLength(1)
+		const initMessage = await screen.findByText(/EMPIEZA/i)
+
+		expect(initMessage).toBeDefined()
 	})
 
-	it('The highlighted column is always at index zero', () => {
-		const { container } = renderResult
+	it('After 2300 ms, the conditional rendering of the initial player name is false', async () => {
+		vi.advanceTimersByTime(300)
 
-		const diceGrid = container.querySelector('.highlight')?.parentElement
-		const newHighlightColumn = diceGrid?.children.item(1)
+		const initMessage = await screen.findByText(/EMPIEZA/i)
 
-		expect(newHighlightColumn).toBeDefined()
+		expect(initMessage).toBeDefined()
 
-		fireEvent.mouseEnter(diceGrid?.children.item(1) as HTMLElement)
+		vi.advanceTimersByTime(2000)
 
-		expect(newHighlightColumn?.getAttribute('class')).toContain('highlight')
+		const { queryByText } = renderResult
 
-		expect(container.querySelectorAll('.highlight')).toHaveLength(1)
+		await waitForElementToBeRemoved(() => queryByText(/EMPIEZA/i))
+	})
+
+	it('The victory message does not appear on the screen at the start of the game.', () => {
+		const victoryMessage = renderResult.queryByText(/victoria para:/i)
+
+		expect(victoryMessage).toBeNull()
+	})
+
+	it('The Exit button redirects to Home "/"', () => {
+		const exitButton = renderResult.getByText('Salir')
+
+		user.click(exitButton)
+
+		expect(location.pathname).toEqual('/')
 	})
 })

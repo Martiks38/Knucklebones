@@ -1,41 +1,20 @@
 <script lang="ts" setup>
-import { onBeforeMount, onMounted, provide, reactive, ref } from 'vue'
+import { provide, reactive, ref } from 'vue'
 import PlayerPanel from '@/components/PlayerPanel.vue'
 import GenericButton from '@/components/GenericButton.vue'
-import type { Player } from '@/typings/index'
+import GameMessage from '@/components/GameMessage.vue'
+import { changeNewDice } from '@/utils/game/changeNewDice'
+import { usePlayers } from '@/hooks/usePlayers'
+import { useAnimationInitGame } from '@/hooks/useAnimationInitGame'
+import type { GameState } from '@/typings/index'
 
-type GameState = 'playing' | 'finished'
-
-const initAnimation = ref(false)
-const informationNewDice = reactive({ col: 0, value: 0 })
-const players = reactive<[Player, Player]>([
-	{ isTurn: false, score: 0 },
-	{ isTurn: false, score: 0 }
-])
+const players = usePlayers()
+const initAnimation = useAnimationInitGame()
 
 const gameState = ref<GameState>('playing')
-
-const changeNewDice = (
-	currentDice: { col: number; value: number },
-	newCol: number,
-	newValue: number
-) => {
-	currentDice.col = newCol
-	currentDice.value = newValue
-}
+const informationNewDice = reactive({ col: 0, value: 0 })
 
 provide('newDice', { informationNewDice, changeNewDice })
-
-onBeforeMount(() => {
-	Math.random() > 0.5 ? (players[0].isTurn = true) : (players[1].isTurn = true)
-})
-
-onMounted(() => {
-	setTimeout(() => {
-		initAnimation.value = true
-		setTimeout(() => (initAnimation.value = false), 2000)
-	}, 300)
-})
 </script>
 
 <template>
@@ -55,15 +34,13 @@ onMounted(() => {
 			@finished-game="() => (gameState = 'finished')"
 			@change-score="(score: number) => (players[1].score = score)"
 		/>
-		<Transition>
-			<div
-				v-if="gameState === 'finished'"
-				class="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-4xl text-center font-semibold whitespace-nowrap"
-			>
-				<p>VICTORIA PARA: {{ players[0].score > players[1].score ? 'Jugador 1' : 'Jugador 2' }}</p>
-				<p>{{ players[0].score }} - {{ players[1].score }}</p>
-			</div>
-		</Transition>
+		<GameMessage :isView="initAnimation">
+			EMPIEZA: {{ players[0].isTurn ? 'Jugador 1' : 'Jugador 2' }}
+		</GameMessage>
+		<GameMessage :isView="gameState === 'finished'">
+			<p>VICTORIA PARA: {{ players[0].score > players[1].score ? 'Jugador 1' : 'Jugador 2' }}</p>
+			<p>{{ players[0].score }} - {{ players[1].score }}</p>
+		</GameMessage>
 		<GenericButton
 			href="/"
 			styles="active"
@@ -72,47 +49,5 @@ onMounted(() => {
 		>
 			Salir
 		</GenericButton>
-		<Transition>
-			<div
-				v-if="initAnimation"
-				class="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-4xl text-center font-semibold whitespace-nowrap"
-			>
-				EMPIEZA: {{ players[0].isTurn ? 'Jugador 1' : 'Jugador 2' }}
-			</div>
-		</Transition>
 	</main>
 </template>
-
-<style>
-.v-enter-active,
-.v-leave-active {
-	transition-property: opacity, left, transform;
-	transition-duration: 0.8s;
-	transition-timing-function: ease;
-}
-
-.v-enter-active {
-	opacity: 0;
-	left: 75%;
-	transform: translateX(-75%) translateY(-50%);
-}
-
-.v-enter-from {
-	opacity: 0;
-	left: 75%;
-	transform: translateX(-75%) translateY(-50%);
-}
-
-.v-enter-to,
-.v-leave-from {
-	opacity: 1;
-	left: 50%;
-	transform: translateX(-50%) translateY(-50%);
-}
-
-.v-leave-to {
-	opacity: 0;
-	left: 35%;
-	transform: translateX(-35%) translateY(-50%);
-}
-</style>
