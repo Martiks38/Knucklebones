@@ -4,22 +4,18 @@ import { clsx } from 'clsx'
 import DiceModel from '@/components/DiceModel.vue'
 import { addToGrid } from '@/utils/addToGrid'
 import { generateRandomNum } from '@/utils/game/generateRandomNum'
-import { changePlayerTurn } from '@/utils/changePlayerTurn'
-import type { GridColumn, Player } from '@/typings'
+import type { GridColumn } from '@/typings'
 
 type Props = {
 	player: number
-	players: [Player, Player]
+	isTurn: boolean
 	gameState: 'playing' | 'finished'
 }
 
 const props = defineProps<Props>()
 
-const emits = defineEmits(['finishedGame', 'changeScore'])
+const emits = defineEmits(['changeScore', 'changeTurn', 'finishedGame'])
 
-const isTurn = computed(() => {
-	return props.players[props.player - 1].isTurn
-})
 const diceValue = ref<number>(generateRandomNum(1, 6))
 
 const { informationNewDice, changeNewDice } = inject('newDice') as {
@@ -59,7 +55,7 @@ const score = computed(() =>
  *  Issues the player's score and if the game is over.
  */
 onBeforeUpdate(() => {
-	if (informationNewDice.value && isTurn.value) {
+	if (informationNewDice.value && props.isTurn) {
 		let modifiedColumn = playerDices[informationNewDice.col].col.map((dice) => {
 			return dice.value !== informationNewDice.value ? dice : { value: 0, factor: 1 }
 		})
@@ -118,7 +114,6 @@ const handlerTurn = (event: MouseEvent) => {
 	if (isFullColumn) return
 
 	addToGrid<number>({ colNumber, value: diceValue.value, grid: playerDices })
-	changePlayerTurn(props.players[0], props.players[1])
 	changeNewDice(informationNewDice, colNumber, diceValue.value)
 
 	diceValue.value = generateRandomNum(1, 6)
@@ -127,6 +122,8 @@ const handlerTurn = (event: MouseEvent) => {
 		.closest('.diceGrid')
 		?.querySelectorAll('[data-col]')
 		.forEach((col) => col.classList.remove('highlight'))
+
+	emits('changeTurn')
 }
 </script>
 

@@ -11,5 +11,14 @@ export function usePlayers() {
 		Math.random() > 0.5 ? (players[0].isTurn = true) : (players[1].isTurn = true)
 	})
 
-	return players
+	const changeTurn = () => {
+		players[0].isTurn = !players[0].isTurn
+		players[1].isTurn = !players[1].isTurn
+	}
+
+	const handlerScore = ({ score, player }: { score: number; player: 1 | 2 }) => {
+		players[player - 1].score = score
+	}
+
+	return { players, changeTurn, handlerScore }
 }
