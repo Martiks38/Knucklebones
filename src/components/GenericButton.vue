@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import clsx from 'clsx'
+
 const props = defineProps({
 	href: { type: String, required: true },
 	optionNumber: Number,
@@ -26,7 +28,7 @@ const activeHover = (ev: MouseEvent) => {
 	<div class="relative w-full">
 		<div
 			class="absolute top-0 left-0 h-full w-full outline outline-2 outline-black outline-offset-[-8px] styleButton"
-			:class="props.styles"
+			:class="clsx([props.styles, { animateNone: !props.animation }])"
 		></div>
 		<router-link
 			@mouseenter="activeHover"
@@ -39,7 +41,7 @@ const activeHover = (ev: MouseEvent) => {
 	</div>
 </template>
 
-<style scope>
+<style>
 .active {
 	background-color: var(--bg-button);
 }
@@ -50,6 +52,10 @@ const activeHover = (ev: MouseEvent) => {
 
 .styleButton.active {
 	animation: moveBackground 800ms linear 0s alternate infinite none;
+}
+
+.styleButton.active.animateNone {
+	animation-name: none;
 }
 
 @keyframes moveBackground {
