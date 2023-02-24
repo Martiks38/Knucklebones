@@ -40,7 +40,7 @@ const DICE_GRID = computed(() =>
 const playerDices = reactive(DICE_GRID.value)
 
 const columnsScore = computed(() =>
-	playerDices.map(({ col }) => col.reduce((score, dice) => score + dice.value, 0))
+	playerDices.map(({ col }) => col.reduce((score, dice) => score + dice.value * dice.factor, 0))
 )
 
 const score = computed(() =>
