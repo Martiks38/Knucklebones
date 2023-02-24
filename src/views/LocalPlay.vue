@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { provide, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import PlayerPanel from '@/components/PlayerPanel.vue'
 import GenericButton from '@/components/GenericButton.vue'
 import GameMessage from '@/components/GameMessage.vue'
@@ -8,6 +9,7 @@ import { usePlayers } from '@/hooks/usePlayers'
 import { useAnimationInitGame } from '@/hooks/useAnimationInitGame'
 import type { GameState } from '@/typings/index'
 
+const router = useRouter()
 const { players, changeTurn, handlerScore } = usePlayers()
 const initAnimation = useAnimationInitGame()
 
@@ -15,6 +17,8 @@ const gameState = ref<GameState>('playing')
 const informationNewDice = reactive({ col: 0, value: 0 })
 
 provide('newDice', { informationNewDice, changeNewDice })
+
+const reset = () => router.go(0)
 </script>
 
 <template>
@@ -44,9 +48,12 @@ provide('newDice', { informationNewDice, changeNewDice })
 			<p>{{ players[0].score }} - {{ players[1].score }}</p>
 		</GameMessage>
 		<div class="flex flex-col gap-6 !w-fit !fixed bottom-12 right-12">
-			<GenericButton v-show="gameState === 'finished'" href="/" styles="active" :animation="false">
-				Volver a jugar
-			</GenericButton>
+			<button v-show="gameState === 'finished'" class="relative w-full" @click="reset">
+				<div
+					class="absolute top-0 left-0 h-full w-full outline outline-2 outline-black outline-offset-[-8px] styleButton active animateNone"
+				></div>
+				<span class="relative block px-16 py-4 text-center font-bold"> Volver a jugar </span>
+			</button>
 			<GenericButton href="/" styles="active" :animation="false">Salir</GenericButton>
 		</div>
 	</main>
