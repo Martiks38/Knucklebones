@@ -43,13 +43,11 @@ provide('newDice', { informationNewDice, changeNewDice })
 			<p>VICTORIA PARA: {{ players[0].score > players[1].score ? 'Jugador 1' : 'Jugador 2' }}</p>
 			<p>{{ players[0].score }} - {{ players[1].score }}</p>
 		</GameMessage>
-		<GenericButton
-			href="/"
-			styles="active"
-			:animation="false"
-			class="!w-fit !fixed bottom-12 right-12"
-		>
-			Salir
-		</GenericButton>
+		<div class="flex flex-col gap-6 !w-fit !fixed bottom-12 right-12">
+			<GenericButton v-show="gameState === 'finished'" href="/" styles="active" :animation="false">
+				Volver a jugar
+			</GenericButton>
+			<GenericButton href="/" styles="active" :animation="false">Salir</GenericButton>
+		</div>
 	</main>
 </template>
