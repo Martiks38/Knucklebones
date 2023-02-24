@@ -39,6 +39,10 @@ const DICE_GRID = computed(() =>
 
 const playerDices = reactive(DICE_GRID.value)
 
+const columnsScore = computed(() =>
+	playerDices.map(({ col }) => col.reduce((score, dice) => score + dice.value, 0))
+)
+
 const score = computed(() =>
 	playerDices.reduce((total, dicesCol) => {
 		return (
@@ -161,15 +165,25 @@ const handlerTurn = (event: MouseEvent) => {
 			<div
 				v-for="(diceCol, indCol) in playerDices"
 				:key="`C${indCol}`"
-				class="grid gap-2 p-2 grid-rows-3"
+				class="relative grid gap-2 p-2 grid-rows-3"
 				:class="clsx({ highlight: isTurn && indCol === 0 && gameState === 'playing' })"
 				@mouseenter="highlightColumn"
 				@click="handlerTurn"
 				:data-col="`R${indCol}`"
 			>
+				<span
+					v-if="columnsScore[indCol] !== 0 && gameState === 'playing'"
+					class="absolute block -top-10 w-full text-xl font-bold text-center"
+					:class="{ rotateX180: player === 2 }"
+					>{{ columnsScore[indCol] }}</span
+				>
 				<div v-for="(dice, indCell) in diceCol.col" :key="`C${indCell}`" class="bg-[#17150f]">
-					<div v-show="dice.value" class="flex items-center justify-center h-full">
-						<DiceModel :factor="dice.factor" :value="dice.value" class="w-[74px] h-auto" />
+					<div
+						v-show="dice.value"
+						class="flex items-center justify-center h-full"
+						:class="clsx({ rotateX180: player === 2 })"
+					>
+						<DiceModel :factor="dice.factor" :value="dice.value" class="w-[64px] h-auto" />
 					</div>
 				</div>
 			</div>
@@ -184,6 +198,10 @@ const handlerTurn = (event: MouseEvent) => {
 	background-color: #212826;
 	border: solid 20px #39433e;
 	box-shadow: 0 17px #1c2420;
+}
+
+.rotateX180 {
+	transform: rotateX(180deg);
 }
 
 .turnGrid {
@@ -207,7 +225,7 @@ const handlerTurn = (event: MouseEvent) => {
 .diceGrid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	height: 280px;
+	height: 240px;
 	background-color: antiquewhite;
 }
 
