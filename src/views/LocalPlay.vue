@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { provide, reactive, ref } from 'vue'
+import { computed, provide, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlayerPanel from '@/components/PlayerPanel.vue'
 import GenericButton from '@/components/GenericButton.vue'
@@ -15,6 +15,11 @@ const initAnimation = useAnimationInitGame()
 
 const gameState = ref<GameState>('playing')
 const informationNewDice = reactive({ col: 0, value: 0 })
+
+const startMessage = computed(() => `EMPIEZA: ${players[0].isTurn ? 'Jugador 1' : 'Jugador 2'}`)
+const endMessage = computed(
+	() => `VICTORIA PARA: ${players[0].score > players[1].score ? 'Jugador 1' : 'Jugador 2'}`
+)
 
 provide('newDice', { informationNewDice, changeNewDice })
 
@@ -41,10 +46,10 @@ const reset = () => router.go(0)
 			@finished-game="() => (gameState = 'finished')"
 		/>
 		<GameMessage :isView="initAnimation">
-			EMPIEZA: {{ players[0].isTurn ? 'Jugador 1' : 'Jugador 2' }}
+			{{ startMessage }}
 		</GameMessage>
 		<GameMessage :isView="gameState === 'finished'">
-			<p>VICTORIA PARA: {{ players[0].score > players[1].score ? 'Jugador 1' : 'Jugador 2' }}</p>
+			<p>{{ endMessage }}</p>
 			<p>{{ players[0].score }} - {{ players[1].score }}</p>
 		</GameMessage>
 		<div class="flex flex-col gap-6 !w-fit !fixed bottom-12 right-12">
