@@ -144,7 +144,12 @@ const handlerTurn = (event: MouseEvent) => {
 				<div class="relative movingAnimation" :class="clsx({ delayAnimation: player === 2 })">
 					<img
 						class="w-full h-auto"
-						:class="clsx({ 'face-to-right': player === 1, grayscale: !isTurn })"
+						:class="
+							clsx({
+								'face-to-right': player === 1,
+								grayscale: !isTurn && gameState !== 'finished'
+							})
+						"
 						:src="`src/assets/avatar-${player}.png`"
 						:alt="`Jugador ${player}`"
 					/>
