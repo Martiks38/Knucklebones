@@ -23,10 +23,7 @@ describe('<PlayerPanel />', () => {
 			},
 			props: {
 				player: 1,
-				players: [
-					{ isTurn: true, score: 0 },
-					{ isTurn: false, score: 0 }
-				],
+				isTurn: true,
 				gameState: 'playing'
 			}
 		})
