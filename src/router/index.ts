@@ -18,6 +18,11 @@ const router = createRouter({
 			path: '/local_play',
 			name: 'playLocal',
 			component: () => import('@/views/LocalPlay.vue')
+		},
+		{
+			path: '/:pathMatch(.*)*',
+			name: 'NotFound',
+			component: () => import('@/views/NotFound.vue')
 		}
 	]
 })
