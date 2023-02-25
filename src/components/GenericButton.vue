@@ -5,11 +5,12 @@ const props = defineProps({
 	href: { type: String, required: true },
 	optionNumber: Number,
 	styles: String,
-	animation: { type: Boolean, default: true }
+	animationMove: { type: Boolean, default: true },
+	animationHover: { type: Boolean, defaul: false }
 })
 
 const activeHover = (ev: MouseEvent) => {
-	if (!props.animation) return
+	if (!props.animationHover) return
 
 	const optionsButtons = Array.from(document.querySelectorAll('.styleButton'))
 	const buttonTarget = (ev.currentTarget as HTMLElement).dataset.option as string
@@ -25,10 +26,10 @@ const activeHover = (ev: MouseEvent) => {
 </script>
 
 <template>
-	<div class="relative w-full">
+	<div class="relative w-fit mx-auto">
 		<div
 			class="absolute top-0 left-0 h-full w-full outline outline-2 outline-black outline-offset-[-8px] styleButton"
-			:class="clsx([props.styles, { animateNone: !props.animation }])"
+			:class="clsx([props.styles, { animateNone: !props.animationMove }])"
 		></div>
 		<router-link
 			@mouseenter="activeHover"

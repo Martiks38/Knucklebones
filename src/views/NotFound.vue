@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import GenericButton from '@/components/GenericButton.vue'
 </script>
+
 <template>
 	<main class="relative grid place-content-center w-full h-screen oneWhoWaits">
 		<div
@@ -12,7 +13,7 @@ import GenericButton from '@/components/GenericButton.vue'
 				<p class="mb-1">No te dejaré perderte.</p>
 				<p class="mb-1">No lo permitiré.</p>
 				<p class="mb-4">Cada vez que caigas aquí abajo, volverás a alzarte.</p>
-				<GenericButton href="/" styles="active">Inicio</GenericButton>
+				<GenericButton href="/" styles="w-fill active">Inicio</GenericButton>
 			</div>
 		</div>
 	</main>

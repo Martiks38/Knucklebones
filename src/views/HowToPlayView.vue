@@ -66,7 +66,7 @@ import GenericButton from '@/components/GenericButton.vue'
 				</div>
 			</div>
 			<div class="max-w-min mx-auto mt-20">
-				<GenericButton href="/" styles="active" :animation="false"> Entendido </GenericButton>
+				<GenericButton href="/" styles="active">Entendido</GenericButton>
 			</div>
 		</div>
 	</main>

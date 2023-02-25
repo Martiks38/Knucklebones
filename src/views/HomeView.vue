@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FireAnimation from '@/components/FireAnimation.vue'
 import GenericButton from '@/components/GenericButton.vue'
+import clsx from 'clsx'
 
 const linkButtons = [
 	['Jugar Local', '/local_play'],
@@ -27,7 +28,8 @@ const linkButtons = [
 					:key="index"
 					:href="link[1]"
 					:option-number="index"
-					:styles="index === 0 ? 'active' : ''"
+					:styles="clsx({ active: index === 0 })"
+					:animation-hover="true"
 				>
 					{{ link[0] }}
 				</GenericButton>

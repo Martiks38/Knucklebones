@@ -59,7 +59,7 @@ const reset = () => router.go(0)
 				></div>
 				<span class="relative block px-16 py-4 text-center font-bold"> Volver a jugar </span>
 			</button>
-			<GenericButton href="/" styles="active" :animation="false">Salir</GenericButton>
+			<GenericButton href="/" styles="active" :animation-move="false">Salir</GenericButton>
 		</div>
 	</main>
 </template>
