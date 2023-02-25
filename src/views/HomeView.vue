@@ -5,7 +5,7 @@ import clsx from 'clsx'
 
 const linkButtons = [
 	['Jugar Local', '/local_play'],
-	['Jugar Multijugador', '/multiplayer'],
+	// ['Jugar Multijugador', '/multiplayer'],
 	['Cómo jugar', '/how_to_play']
 ]
 </script>
