@@ -10,6 +10,9 @@ module.exports = {
 			colors: {
 				redGame: '#fc0403'
 			},
+			fontFamily: {
+				specialElite: ['Special Elite', 'Roboto', 'sans-serif', 'Arial']
+			},
 			rotate: {
 				135: '135deg'
 			}
