@@ -4,6 +4,8 @@ import { clsx } from 'clsx'
 import DiceModel from '@/components/DiceModel.vue'
 import { addToGrid } from '@/utils/addToGrid'
 import { generateRandomNum } from '@/utils/game/generateRandomNum'
+import avatarPlayer1 from '@/assets/avatar-1.png'
+import avatarPlayer2 from '@/assets/avatar-2.png'
 import type { GridColumn } from '@/typings'
 
 type Props = {
@@ -38,6 +40,7 @@ const DICE_GRID = computed(() =>
 )
 
 const playerDices = reactive(DICE_GRID.value)
+const avatar = computed(() => (props.player === 1 ? avatarPlayer1 : avatarPlayer2))
 
 const columnsScore = computed(() =>
 	playerDices.map(({ col }) => col.reduce((score, dice) => score + dice.value * dice.factor, 0))
@@ -150,7 +153,7 @@ const handlerTurn = (event: MouseEvent) => {
 								grayscale: !isTurn && gameState !== 'finished'
 							})
 						"
-						:src="`../assets/avatar-${player}.png`"
+						:src="avatar"
 						:alt="`Jugador ${player}`"
 					/>
 				</div>
