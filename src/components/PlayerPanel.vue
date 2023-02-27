@@ -117,7 +117,7 @@ const handlerTurn = (event: MouseEvent) => {
 
 	if (isFullColumn) return
 
-	addToGrid<number>({ colNumber, value: diceValue.value, grid: playerDices })
+	addToGrid({ colNumber, value: diceValue.value, grid: playerDices })
 	changeNewDice(informationNewDice, colNumber, diceValue.value)
 
 	diceValue.value = generateRandomNum(1, 6)

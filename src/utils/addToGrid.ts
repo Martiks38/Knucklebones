@@ -1,6 +1,6 @@
 import type { GridColumn } from '@/typings'
 
-export function addToGrid<T>({
+export function addToGrid({
 	colNumber,
 	grid,
 	value
