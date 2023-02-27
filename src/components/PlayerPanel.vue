@@ -150,7 +150,7 @@ const handlerTurn = (event: MouseEvent) => {
 								grayscale: !isTurn && gameState !== 'finished'
 							})
 						"
-						:src="`src/assets/avatar-${player}.png`"
+						:src="`../assets/avatar-${player}.png`"
 						:alt="`Jugador ${player}`"
 					/>
 				</div>
