@@ -5,10 +5,10 @@ export function addToGrid<T>({
 	grid,
 	value
 }: {
-	value: T
+	value: number
 	colNumber: number
 	grid: {
-		col: GridColumn<T>[]
+		col: GridColumn<number>[]
 	}[]
 }): void | false {
 	const diceCol = grid[colNumber].col.slice()

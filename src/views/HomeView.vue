@@ -15,7 +15,6 @@ const linkButtons = [
 		<FireAnimation />
 		<div class="w-[860px]">
 			<div class="mb-12 text-white">
-				<div></div>
 				<h1 class="mb-4 text-7xl text-center">Matatena</h1>
 				<img src="../assets/bones.png" alt="" class="mx-auto mb-4 w-24" />
 				<span class="block text-2xl text-center"
